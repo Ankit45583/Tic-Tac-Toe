@@ -44,5 +44,4 @@ This logic makes the AI feel realistic and competitive.
 
 ---
 
-## 📂 Project Structure
 
