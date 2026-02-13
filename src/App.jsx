@@ -16,9 +16,18 @@ function App() {
     }
 
     const newBoard = [...board];
-    newBoard[i] = isXNext ? "X" : "O";
+    newBoard[i] = "X";
     setBoard(newBoard);
-    setIsXNext(!isXNext);
+
+    setTimeout(() => {
+      if (calculationWinner(newBoard)) return;
+
+      const aiMove = getAIMove(newBoard);
+      if (aiMove !== undefined) {
+        newBoard[aiMove] = "O";
+        setBoard([...newBoard]);
+      }
+    }, 500);
   }
    
   const resetGame = ()=>
@@ -26,14 +35,15 @@ function App() {
      setBoard(Array(9).fill(null));
      setIsXNext(true);
   }
-
+  
+ 
   return (
       <div className='container'>
         <h2>Tic-Tac-Toe</h2>
         
         <div className="status">
           {winner ? `Winner: ${winner}`
-          : `Next Player: ${isXNext ? "X" : "O"}`}
+          :"You(X) vs AI(O)"}
         </div>
 
         <div className='board'>
@@ -61,7 +71,39 @@ function calculationWinner(board){
       }
     }
     return null;
+    
 }
+
+function getAIMove(board) {
+  const lines = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6],
+  ];
+
+  for (let [a,b,c] of lines)
+ {
+    const values = [board[a], board[b], board[c]];
+    if (values.filter(v => v === "O").length === 2 && values.includes(null)) {
+      return [a,b,c][values.indexOf(null)];
+    }
+  }
+
+  for (let [a,b,c] of lines)
+  {
+    const values = [board[a], board[b], board[c]];
+    if (values.filter(v => v === "X").length === 2 && values.includes(null)) {
+      return [a,b,c][values.indexOf(null)];
+    }
+  }
+
+  const empty = board
+    .map((v,i) => v === null ? i : null)
+    .filter(v => v !== null);
+
+  return empty[Math.floor(Math.random() * empty.length)];
+}
+
 
 
 export default App
